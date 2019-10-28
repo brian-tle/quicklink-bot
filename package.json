@@ -1,0 +1,18 @@
+{
+  "name": "quicklink_bot",
+  "version": "1.0.0",
+  "description": "Link storing bot",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.1.0",
+    "mongodb": "^3.3.2",
+    "simple-hashtable": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
