@@ -1,7 +1,9 @@
 require('dotenv').config();
+const fs = require('fs');
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
+fs.readdir('./events/', (err, files) => {})
 
 const MongoClient = require('mongodb').MongoClient;
 const url = process.env.MONGO_URL;
@@ -124,9 +126,12 @@ REQUIRE COLLECTION TO EXIST IN EVERY CASE
                         }
                         if (args[0] === undefined) {
                             page = 0;
+                        } else {
+                            page = args[0];
                         }
+
                         let combined = "";
-                        let x = 0 + page;
+                        let x = 0 + (page * 5);
 
                         for (index in res) {
                             if (res[index].name === undefined) {
@@ -136,8 +141,6 @@ REQUIRE COLLECTION TO EXIST IN EVERY CASE
                             }
                         }
                         msg.channel.send({embed: {
-                                //Orange 15105570
-                                //Blue 3447003
                                 color: 15105570,
                                 fields: [{
                                     name:  combined ,
@@ -198,23 +201,35 @@ REQUIRE COLLECTION TO EXIST IN EVERY CASE
             var decline = args[1];
 
             if (decline != undefined) {
-                msg.channel.send("> no more params");
+                msg.channel.send("> no more params"); //Edit to look better later
             } else {
                 MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, db) => {
                         if (err) { throw err; }
 
-                        let query = {name: item};
+                        let query = item;
 
                         var dbo = db.db(process.env.MONGO_DB_NAME);
-                        dbo.collection(serverid).find({query}, {projection: { _id: 0}}).toArray(function (err, res) {
+                        dbo.collection(serverid).find({'name': {'$regex': query,'$options':'i'}}).toArray(function (err, res) {
                             if (err) { throw err; }
 
+                            let combined = "";
                             if (res.length === 0) {
                                 msg.channel.send("> No matches");
                                 db.close();
                             } else {
-                                msg.channel.send(res);
+                                for (index in res) {
+                                    combined += "**" + res[index].name + "**" + "\n" + res[index].url + "\n";
+                                }
+                                
+                                msg.channel.send({embed: {
+                                color: 15105570,
+                                fields: [{
+                                    name:  combined,
+                                    value: msg.author + "\t\t" + date,
+                                    }],
+                                }});
                             }
+
                             db.close();
                         });
                     });
@@ -222,11 +237,7 @@ REQUIRE COLLECTION TO EXIST IN EVERY CASE
             break;
                 
         case 'help':
-            msg.channel.send(">>> Commands are: \nmkcol / add / ls / sid / rm / rmcol / grep ('starts with')");
-            break;
-
-        case '': 
-            msg.channel.send("> Please check $help for a list of commands");
+            msg.channel.send("Commands are: \n> mkcol | add | ls | sid | rm | rmcol | grep");
             break;
 
         default: 
