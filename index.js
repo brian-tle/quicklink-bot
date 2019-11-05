@@ -131,13 +131,13 @@ REQUIRE COLLECTION TO EXIST IN EVERY CASE
                         }
 
                         let combined = "";
-                        let x = 0 + (page * 5);
+                        let x = 0;
 
-                        for (index in res) {
-                            if (res[index].name === undefined) {
+                        for (x; x < 20; x++) {
+                            if (res[x] === undefined) {
                                 break;
                             } else {
-                                combined += "**" + res[index].name + "**" + "\n" + res[index].url + "\n";
+                                combined += "**" + res[x].name + "**" + "\n" + res[x].url + "\n";
                             }
                         }
                         msg.channel.send({embed: {
