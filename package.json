@@ -6,17 +6,13 @@
   "dependencies": {
     "discord.js": "^11.5.1",
     "dotenv": "^8.2.0",
-    "mongodb": "^3.3.4",
+    "mongodb": "^3.3.4"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/brian-tle/quicklink-bot"
-  },
-  "author": "brian-tle",
+  "author": "",
   "license": "ISC"
 }
