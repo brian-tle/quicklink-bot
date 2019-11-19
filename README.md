@@ -15,8 +15,10 @@ Using the prefix '$':
 - `help` : returns list of commmands
 
 ## Dependencies
-- node.js version 10.X.X 
-- discord.js
+- node.js v.^10
+- discord.js v.^11
+- dotenv v.^8
+- mongodb v.^3
 
 ## Installation Process
 - Install node.js latest stable release
