@@ -1,5 +1,8 @@
 # quicklink-bot
 
+## Invite Link
+https://discordapp.com/oauth2/authorize?client_id=624364418737766410&scope=bot
+
 ## Description
 A simple Discord bot that stores URLs and text
 
