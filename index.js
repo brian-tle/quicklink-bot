@@ -362,7 +362,28 @@ client.on('message', msg => {
                             counter++;
                         }
 
-                        if (counter != 0) {
+                        if (counter === 0) {
+                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
+                                if (err) { 
+                                    msg.channel.send({embed: {
+                                        color: 15158332, 
+                                        fields: [{
+                                            name: "**ERROR**",
+                                            value: "**" + tag + "**" + " could not be deleted",
+                                        }],
+                                    }});
+                                } else {
+                                    msg.channel.send({embed: {
+                                        color: 3066993, 
+                                        fields: [{
+                                            name: "Deletion successful for:",
+                                            value: "**" + tag + "**",
+                                        }],
+                                    }});                        
+                                }
+                            db.close();
+                            });
+                        } else if (counter != 0) {
                            msg.channel.send({embed: {
                                 color: 15158332, 
                                 fields: [{
@@ -371,7 +392,7 @@ client.on('message', msg => {
                                 }],
                             }}); 
                            db.close();
-                        } else if (counter === 0) {
+                        } else {
                             dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
                                 if (err) { 
                                     msg.channel.send({embed: {
