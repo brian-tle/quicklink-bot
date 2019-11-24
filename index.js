@@ -363,37 +363,16 @@ client.on('message', msg => {
                         }
 
                         if (counter === 0) {
-                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
-                                if (err) { 
-                                    msg.channel.send({embed: {
-                                        color: 15158332, 
-                                        fields: [{
-                                            name: "**ERROR**",
-                                            value: "**" + tag + "**" + " could not be deleted",
-                                        }],
-                                    }});
-                                } else {
-                                    msg.channel.send({embed: {
-                                        color: 3066993, 
-                                        fields: [{
-                                            name: "Deletion successful for:",
-                                            value: "**" + tag + "**",
-                                        }],
-                                    }});                        
-                                }
-                            db.close();
-                            });
-                        } else if (counter != 0) {
-                           msg.channel.send({embed: {
+                            msg.channel.send({embed: {
                                 color: 15158332, 
                                 fields: [{
                                     name: "**ERROR**",
                                     value: "**" + tag + "**" + " does not exist",
                                 }],
                             }}); 
-                           db.close();
-                        } else {
-                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
+                            db.close();
+                        } else if (counter != 0) {
+                           dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
                                 if (err) { 
                                     msg.channel.send({embed: {
                                         color: 15158332, 
@@ -413,9 +392,9 @@ client.on('message', msg => {
                                 }
                             db.close();
                             });
-                        }
+                        } 
                     });
-                });
+                }
             }
             
             break;
