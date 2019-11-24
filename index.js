@@ -362,16 +362,7 @@ client.on('message', msg => {
                             counter++;
                         }
 
-                        if (counter === 0) {
-                            msg.channel.send({embed: {
-                                color: 15158332, 
-                                fields: [{
-                                    name: "**ERROR**",
-                                    value: "**" + tag + "**" + " does not exist",
-                                }],
-                            }}); 
-                            db.close();
-                        } else if (counter != 0) {
+                        if (counter != 0) {
                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
                                 if (err) { 
                                     msg.channel.send({embed: {
@@ -392,9 +383,18 @@ client.on('message', msg => {
                                 }
                             db.close();
                             });
+                        } else if (counter === 0) {
+                            msg.channel.send({embed: {
+                                color: 15158332, 
+                                fields: [{
+                                    name: "**ERROR**",
+                                    value: "**" + tag + "**" + " does not exist",
+                                }],
+                            }}); 
+                            db.close();
                         } 
                     });
-                }
+                });
             }
             
             break;
