@@ -67,7 +67,13 @@ client.on('message', msg => {
                 dbo.collection(serverid).drop(function(err, delOK) {
                     if (err) { throw err; }
                     if (delOK) {
-                        msg.channel.send("```You have deleted the entire collection. Make a new one with $mkcol```");
+                        msg.channel.send({embed: {
+                            color: 15158332, 
+                            fields: [{
+                                name: "**DELETING COLLECTION**",
+                                value: "You have deleted the entire collection. Make a new one with $mkcol",
+                            }],
+                        }});
                         console.log("Collection /" + serverid + "/ deleted at " + date);
                     }
                     db.close();
@@ -134,7 +140,7 @@ client.on('message', msg => {
                                 if (counter === 0) {
                                     dbo.collection(serverid).insertOne(insertObject, function (err, res) {
                                         if (err) { 
-                                            throw err; 
+                                            console.log("Errors at add");
                                         } else {
                                             msg.channel.send({embed: {
                                                 color: 3066993, 
@@ -362,37 +368,48 @@ client.on('message', msg => {
                             counter++;
                         }
 
-                        if (counter != 0) {
-                           dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
-                                if (err) { 
-                                    msg.channel.send({embed: {
-                                        color: 15158332, 
-                                        fields: [{
-                                            name: "**ERROR**",
-                                            value: "**" + tag + "**" + " could not be deleted",
-                                        }],
-                                    }});
-                                } else {
-                                    msg.channel.send({embed: {
-                                        color: 3066993, 
-                                        fields: [{
-                                            name: "Deletion successful for:",
-                                            value: "**" + tag + "**",
-                                        }],
-                                    }});                        
-                                }
+                        if (counter === 0) {
+                                msg.channel.send({embed: {
+                                    color: 15158332, 
+                                    fields: [{
+                                        name: "**ERROR**",
+                                        value: "**" + tag + "**" + " does not exist",
+                                    }],
+                                }}); 
                             db.close();
-                            });
-                        } else if (counter === 0) {
-                            msg.channel.send({embed: {
-                                color: 15158332, 
-                                fields: [{
-                                    name: "**ERROR**",
-                                    value: "**" + tag + "**" + " does not exist",
-                                }],
-                            }}); 
+                        } if (counter != 0) {
+                            if (title === found[index].name) {
+                                dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
+                                    if (err) { 
+                                        msg.channel.send({embed: {
+                                            color: 15158332, 
+                                            fields: [{
+                                                name: "**ERROR**",
+                                                value: "**" + tag + "**" + " could not be deleted",
+                                            }],
+                                        }});
+                                    } else {
+                                        msg.channel.send({embed: {
+                                            color: 3066993, 
+                                            fields: [{
+                                                name: "Deletion successful for:",
+                                                value: "**" + tag + "**",
+                                            }],
+                                        }});                        
+                                    }
+                                db.close();
+                                });
+                            } else {
+                                msg.channel.send({embed: {
+                                    color: 15158332, 
+                                    fields: [{
+                                        name: "**ERROR**",
+                                        value: "**" + tag + "**" + " does not exist",
+                                    }],
+                                }}); 
                             db.close();
-                        } 
+                            }
+                        }
                     });
                 });
             }
