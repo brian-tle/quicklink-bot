@@ -335,40 +335,68 @@ client.on('message', msg => {
             break;
 
         case 'rm':
-        /*
-        TWO ARGS NO WORK
-        */
             var tag = args[0];
-            MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, db) => {
-                if (err) { throw err; }
+            var long = args[1];
+            var title = args[0];
 
-                var deleteObject = { name: tag }
+            if (args[1] != undefined) {
+                msg.channel.send({embed: {
+                    color: 15158332, 
+                        fields: [{
+                            name: "**ERROR**",
+                            value: "Too many parameters",
+                        }],
+                    }
+                });
+            } else {
+                MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true}, (err, db) => {
+                    if (err) { throw err; }
 
-                var dbo = db.db(process.env.MONGO_DB_NAME);
+                    var deleteObject = { name: tag }
 
-                dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
-                    let combined = "";
-                    if (err) { 
-                        msg.channel.send({embed: {
+                    var dbo = db.db(process.env.MONGO_DB_NAME);
+                    var counter = 0;
+
+                    dbo.collection(serverid).find(title).toArray(function (err, found) {
+                        for (index in found) {
+                            counter++;
+                        }
+
+                        if (counter != 0) {
+                           msg.channel.send({embed: {
                                 color: 15158332, 
                                 fields: [{
                                     name: "**ERROR**",
-                                    value: "**" + tag + "**" + " could not be deleted",
+                                    value: "**" + tag + "**" + " does not exist",
                                 }],
-                            }});
-                        throw err; 
-                    } else {
-                        msg.channel.send({embed: {
-                            color: 3066993, 
-                            fields: [{
-                                name: "Deletion successful for:",
-                                value: "**" + tag + "**",
-                            }],
-                        }});                        
-                    }
-                    db.close();
+                            }}); 
+                           db.close();
+                        } else if (counter === 0) {
+                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
+                                if (err) { 
+                                    msg.channel.send({embed: {
+                                        color: 15158332, 
+                                        fields: [{
+                                            name: "**ERROR**",
+                                            value: "**" + tag + "**" + " could not be deleted",
+                                        }],
+                                    }});
+                                } else {
+                                    msg.channel.send({embed: {
+                                        color: 3066993, 
+                                        fields: [{
+                                            name: "Deletion successful for:",
+                                            value: "**" + tag + "**",
+                                        }],
+                                    }});                        
+                                }
+                            db.close();
+                            });
+                        }
+                    });
                 });
-            });
+            }
+            
             break;
                 
         case 'sid':
