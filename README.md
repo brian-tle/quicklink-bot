@@ -36,6 +36,6 @@ Using the prefix '$':
 - Run `npm install discord.js`
 
 ## Running the Application
-- Initially ran with `node app.js`, but only lasted as long as node was running
-- Now hosted on heroku to run 24/7
+- Initially only ran locally with `node index.js`
+- Currently hosted on heroku to run 24/7
 
