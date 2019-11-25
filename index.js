@@ -56,6 +56,7 @@ client.on('message', msg => {
                     }
                     db.close(); 
                 });
+                db.close();
             });
             break;
 
@@ -79,6 +80,7 @@ client.on('message', msg => {
                     }
                     db.close();
                 });
+                db.close();
             });
             break;
 
@@ -191,6 +193,7 @@ client.on('message', msg => {
                         }
                         db.close();
                     });
+                    db.close();
                 });
             } 
             break;
@@ -282,6 +285,7 @@ client.on('message', msg => {
                     }
                     db.close();
                 });
+                db.close();
             });
             break;
 
@@ -339,6 +343,7 @@ client.on('message', msg => {
                         }
                         db.close();
                     });
+                    db.close();
                 });
             }
             break;
@@ -401,6 +406,7 @@ client.on('message', msg => {
                         }
                         db.close();
                      });
+                db.close();
                 });
             }
             
