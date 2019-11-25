@@ -51,9 +51,10 @@ client.on('message', msg => {
                                 }});
                                 console.log("Collection /" + serverid + "/ created at " + date);
                             }
-                            db.close(); 
+                            db.close();
                         });
                     }
+                    db.close(); 
                 });
             });
             break;
@@ -188,10 +189,10 @@ client.on('message', msg => {
                                 }],
                             }});
                         }
+                        db.close();
                     });
                 });
             } 
-
             break;
 
         case 'ls':
@@ -203,6 +204,10 @@ client.on('message', msg => {
                 var dbo = db.db(process.env.MONGO_DB_NAME);
 
                 dbo.listCollections({name: serverid}).next(function(err, collinfo) {
+                    if (err) {
+                        console.log(err);
+                    }
+
                     if (collinfo) {
                         dbo.collection(serverid).find({}, {projection: { _id: 0 }}).toArray(function (err, res) {
                             if (err) {
@@ -211,16 +216,15 @@ client.on('message', msg => {
 
                             if (res.length === 0) {
                                 msg.channel.send({embed: {
-                                color: 15158332, 
-                                fields: [{
-                                    name: "**ERROR**",
-                                    value: "This collection is empty",
-                                }],
-                            }});
-                                db.close();
+                                    color: 15158332, 
+                                    fields: [{
+                                        name: "**ERROR**",
+                                        value: "This collection is empty",
+                                    }],
+                                }});
                             }
 
-                            if (args[0] === undefined || args[0] === 1) {
+                            if (args[0] === undefined || args[0] === 0) {
                                 page = 0;
                             } else {
                                 page = args[0];
@@ -235,14 +239,14 @@ client.on('message', msg => {
 
                             if (res[start] === undefined) {
                                 msg.channel.send({embed: {
-                                color: 15158332, 
-                                fields: [{
-                                    name: "**ERROR**",
-                                    value: "No contents exist for this page or invalid",
-                                }],
-                            }});
-                                db.close();
+                                    color: 15158332, 
+                                    fields: [{
+                                        name: "**ERROR**",
+                                        value: "No contents exist for this page or invalid",
+                                    }],
+                                }});
                             }
+
                             for (start; start < end; start++) {
                                 if (res[start] === undefined) {
                                     break;
@@ -251,6 +255,7 @@ client.on('message', msg => {
                                     combined += "**" + res[start].name + "**\n" + res[start].url + "\n";
                                 }
                             }
+
                             if (exist === true) {
                                 msg.channel.send({embed: {
                                     color: 3447003,
@@ -272,9 +277,10 @@ client.on('message', msg => {
                                     value: "Please make a collection first",
                                 }],
                             }});
-                            db.close(); 
+                            db.close();
                         });
                     }
+                    db.close();
                 });
             });
             break;
@@ -299,7 +305,7 @@ client.on('message', msg => {
 
                     var dbo = db.db(process.env.MONGO_DB_NAME);
                     dbo.collection(serverid).find({'name': {'$regex': query,'$options':'i'}}).toArray(function (err, res) {
-                        if (err) { throw err; }
+                        if (err) { console.log(err); }
 
                         let combined = "";
                         if (res.length === 0) {
@@ -310,7 +316,6 @@ client.on('message', msg => {
                                     value: "No results",
                                 }],
                             }});
-                            db.close();
                         } else if (res.length > 10) {
                             msg.channel.send({embed: {
                                 color: 15158332,
@@ -319,7 +324,6 @@ client.on('message', msg => {
                                     value: "Please narrow results. Due to Form.size, I am restricted to at most 10 results",
                                 }],
                             }});
-                            db.close();
                         } else {
                             for (index in res) {
                                 combined += "**" + res[index].name + "**\n" + res[index].url + "\n";
@@ -333,7 +337,6 @@ client.on('message', msg => {
                                 }],
                             }});
                         }
-
                         db.close();
                     });
                 });
@@ -343,7 +346,6 @@ client.on('message', msg => {
         case 'rm':
             var tag = args[0];
             var long = args[1];
-            var title = args[0];
 
             if (args[1] != undefined) {
                 msg.channel.send({embed: {
@@ -361,56 +363,44 @@ client.on('message', msg => {
                     var deleteObject = { name: tag }
 
                     var dbo = db.db(process.env.MONGO_DB_NAME);
-                    var counter = 0;
 
-                    dbo.collection(serverid).find(title).toArray(function (err, found) {
+                     dbo.collection(serverid).find(deleteObject).toArray(function(err, found) {
+                        var item = "";
                         for (index in found) {
-                            counter++;
+                            item = found[index].name;
                         }
-
-                        if (counter === 0) {
-                                msg.channel.send({embed: {
-                                    color: 15158332, 
-                                    fields: [{
-                                        name: "**ERROR**",
-                                        value: "**" + tag + "**" + " does not exist",
-                                    }],
-                                }}); 
-                            db.close();
-                        } if (counter != 0) {
-                            if (title === found[index].name) {
-                                dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
-                                    if (err) { 
-                                        msg.channel.send({embed: {
-                                            color: 15158332, 
-                                            fields: [{
-                                                name: "**ERROR**",
-                                                value: "**" + tag + "**" + " could not be deleted",
-                                            }],
-                                        }});
-                                    } else {
-                                        msg.channel.send({embed: {
-                                            color: 3066993, 
-                                            fields: [{
-                                                name: "Deletion successful for:",
-                                                value: "**" + tag + "**",
-                                            }],
-                                        }});                        
-                                    }
+                        if (tag === item) {
+                            dbo.collection(serverid).deleteOne(deleteObject, function(err, obj) {
+                                if (err) { 
+                                    msg.channel.send({embed: {
+                                        color: 15158332, 
+                                        fields: [{
+                                            name: "**ERROR**",
+                                            value: "**" + tag + "**" + " could not be deleted",
+                                        }],
+                                    }}); 
+                                } else {
+                                    msg.channel.send({embed: {
+                                        color: 3066993, 
+                                        fields: [{
+                                            name: "Deletion successful for:",
+                                            value: "**" + tag + "**",
+                                        }],
+                                    }});                        
+                                }
                                 db.close();
-                                });
-                            } else {
-                                msg.channel.send({embed: {
-                                    color: 15158332, 
-                                    fields: [{
-                                        name: "**ERROR**",
-                                        value: "**" + tag + "**" + " does not exist",
-                                    }],
-                                }}); 
-                            db.close();
-                            }
+                            });
+                        } else {
+                            msg.channel.send({embed: {
+                                color: 15158332, 
+                                fields: [{
+                                    name: "**ERROR**",
+                                    value: "**" + tag + "**" + " could not be found",
+                                }],
+                            }}); 
                         }
-                    });
+                        db.close();
+                     });
                 });
             }
             
