@@ -84,18 +84,21 @@ client.on('message', msg => {
 
         case 'add':
             var title = args[0];
-            var url = args[1];
-            var lengthy = args[2];
+
+            let url_or_str = "";
+            for (let i = 1; i < args.length; i++) {
+                url_or_str += args[i] + " ";
+            }
 
             if (url === undefined) {
                 msg.channel.send({embed: {
                     color: 15158332, 
                     fields: [{
                         name: "**ERROR**",
-                        value: "Second parameter required",
+                        value: "Content required",
                     }],
                 }});
-            } else if (title.length > 20 || url.length > 180) {
+            } else if (title.length > 20 || url_or_str.length > 180) {
                  msg.channel.send({embed: {
                     color: 15158332, 
                     fields: [{
@@ -103,15 +106,7 @@ client.on('message', msg => {
                         value: "Char length must be within $add [20] [180]",
                     }],
                 }});
-            } else if (url != undefined && lengthy != undefined) {
-                msg.channel.send({embed: {
-                    color: 15158332, 
-                    fields: [{
-                        name: "**ERROR**",
-                        value: "Too many parameters ",
-                    }],
-                }});           
-            } else if (url != undefined) {
+            } else if (url_or_str != undefined) {
                 MongoClient.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, db) => {
                     if (err) {
                         msg.channel.send({embed: {
@@ -130,7 +125,7 @@ client.on('message', msg => {
                         if (collinfo) {
                             var insertObject = {
                                 name: title,
-                                url: url
+                                url: url_or_str
                             }
 
                             var counter = 0;
@@ -147,7 +142,7 @@ client.on('message', msg => {
                                             msg.channel.send({embed: {
                                                 color: 3066993, 
                                                     fields: [{
-                                                        name: "Assigning **" + url + "** as",
+                                                        name: "Assigning **" + url_or_str + "** as",
                                                         value: "`" + title + "`",
                                                 }],
                                             }});
@@ -171,7 +166,7 @@ client.on('message', msg => {
                                                 msg.channel.send({embed: {
                                                     color: 3066993, 
                                                     fields: [{
-                                                        name: "Assigning `" + url + "` as",
+                                                        name: "Assigning `" + url_or_str + "` as",
                                                         value: "**" + title + "**",
                                                     }],
                                                 }});
