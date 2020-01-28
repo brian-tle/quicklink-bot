@@ -1,10 +1,13 @@
 # quicklink-bot
 
-## Invite Link
-https://discordapp.com/oauth2/authorize?client_id=624364418737766410&scope=bot
-
 ## Description
-A simple Discord bot that stores URLs and text
+A simple Discord bot that stores and returns URLs and text to a user's Discord channel
+
+## Inviting and Setting Up the Bot to your Server
+- Click the `oauth2` link underneath and select the server you wish to invite the bot to
+https://discordapp.com/oauth2/authorize?client_id=624364418737766410&scope=bot
+- Run the command `$mkcol` to establish a database collection
+- Use the bot to your will
 
 ## Commands
 Using the prefix '$':
